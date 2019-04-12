@@ -1,0 +1,705 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "i. sixty six tolls",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": [
+                        "forget it",
+                        "off",
+                        "quit",
+                        "never mind",
+                        "cancel"
+                    ]
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "can you help me",
+                        "help me",
+                        "help"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": [
+                        "quit",
+                        "exit",
+                        "shut up",
+                        "off",
+                        "stop"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "get_speeds",
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "samples": [
+                                "{direction}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "What are the {direction}  speeds",
+                        "get the {direction} speeds",
+                        "{direction} speeds",
+                        "Tell me the {direction} speeds",
+                        "What is the {direction} speed"
+                    ]
+                },
+                {
+                    "name": "get_toll_hours",
+                    "slots": [],
+                    "samples": [
+                        "When are tolls charged",
+                        "When are the tolls in effect"
+                    ]
+                },
+                {
+                    "name": "get_details",
+                    "slots": [],
+                    "samples": [
+                        "Get me more information",
+                        "Give me more information",
+                        "Tell me more information",
+                        "Give me more information about the tolls",
+                        "Tell me more about the tolls",
+                        "Tell me how tolling works",
+                        "How do the tolls work",
+                        "How does tolling work",
+                        "Tell me about the tolls"
+                    ]
+                },
+                {
+                    "name": "list_interchanges",
+                    "slots": [
+                        {
+                            "name": "interchange_type",
+                            "type": "interchange",
+                            "samples": [
+                                "{interchange_type}"
+                            ]
+                        },
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "samples": [
+                                "{direction}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "Tell me all the {direction} {interchange_type}",
+                        "List the {direction}  {interchange_type}"
+                    ]
+                },
+                {
+                    "name": "get_toll",
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "samples": [
+                                "{direction}"
+                            ]
+                        },
+                        {
+                            "name": "entrance",
+                            "type": "entrance"
+                        },
+                        {
+                            "name": "exit",
+                            "type": "exit"
+                        }
+                    ],
+                    "samples": [
+                        "what is the {direction} toll from {entrance} to {exit}"
+                    ]
+                },
+                {
+                    "name": "save_trip",
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "samples": [
+                                "{direction}"
+                            ]
+                        },
+                        {
+                            "name": "entrance",
+                            "type": "entrance",
+                            "samples": [
+                                "{entrance}"
+                            ]
+                        },
+                        {
+                            "name": "exit",
+                            "type": "exit",
+                            "samples": [
+                                "{exit}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "save my favorite trip",
+                        "save my most common trip",
+                        "save my trip",
+                        "save my most frequent trip"
+                    ]
+                },
+                {
+                    "name": "get_favs",
+                    "slots": [],
+                    "samples": [
+                        "What are my saved trips",
+                        "What are my saved routes"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "direction",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "outbound",
+                                "synonyms": [
+                                    "westbound",
+                                    "west"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "inbound",
+                                "synonyms": [
+                                    "eastbound",
+                                    "east"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "interchange",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "exits",
+                                "synonyms": [
+                                    "off ramps"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "entrances",
+                                "synonyms": [
+                                    "on-ramps",
+                                    "entries"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "entrance",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "route seven",
+                                "synonyms": [
+                                    "leesburg pike"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "washington boulevard"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fairfax drive",
+                                "synonyms": [
+                                    "ballston"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "lee highway",
+                                "synonyms": [
+                                    "rosslyn",
+                                    "lee highway scott street",
+                                    "scott street",
+                                    "lee highway spout run",
+                                    "spout run parkway",
+                                    "spout run"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "pentagon",
+                                "synonyms": [
+                                    "alexandria",
+                                    "exit seventy five"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "washington",
+                                "synonyms": [
+                                    "Washington",
+                                    "roosevelt bridge"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "glebe road"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "sycamore street"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "route two sixty seven",
+                                "synonyms": [
+                                    "dulles toll road"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "route one twenty three",
+                                "synonyms": [
+                                    "dolley madison boulevard"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "i four ninety five"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "i sixty six"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "exit",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "i four ninety five",
+                                "synonyms": [
+                                    "exit eighty four"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "route two sixty seven",
+                                "synonyms": [
+                                    "exit sixty seven",
+                                    "dulles toll road"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "sycamore street",
+                                "synonyms": [
+                                    "exit sixty nine"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "glebe road",
+                                "synonyms": [
+                                    "exit seventy one"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "washington",
+                                "synonyms": [
+                                    "Washington",
+                                    "roosevelt bridge"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "pentagon",
+                                "synonyms": [
+                                    "exit seventy five",
+                                    "alexandria"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "rosslyn",
+                                "synonyms": [
+                                    "exit seventy three"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "lee highway",
+                                "synonyms": [
+                                    "exit seventy two",
+                                    "spout run parkway",
+                                    "spout run"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fairfax drive",
+                                "synonyms": [
+                                    "ballston",
+                                    "north fairfax drive",
+                                    "exit seventy one"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "westmoreland street",
+                                "synonyms": [
+                                    "exit sixty eight"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "washington boulevard",
+                                "synonyms": [
+                                    "exit sixty nine",
+                                    "lee highway"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "route seven",
+                                "synonyms": [
+                                    "exit 66",
+                                    "leesburg pike"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "get_toll_hours",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": []
+                },
+                {
+                    "name": "get_speeds",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.604704403476.507383405733"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.574324400287.1143720234835.713128749710"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "list_interchanges",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "interchange_type",
+                            "type": "interchange",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.804633138243.1212505493996"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1467663425300.19760399363.133011558607"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.804633138243.856392000891"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "get_toll",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.449454333768.443901577156"
+                            }
+                        },
+                        {
+                            "name": "entrance",
+                            "type": "entrance",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.449454333768.730277912184"
+                            }
+                        },
+                        {
+                            "name": "exit",
+                            "type": "exit",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.449454333768.425078273810"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "save_trip",
+                    "delegationStrategy": "ALWAYS",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "direction",
+                            "type": "direction",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1083046149280.918486290602"
+                            }
+                        },
+                        {
+                            "name": "entrance",
+                            "type": "entrance",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1083046149280.415697854428"
+                            }
+                        },
+                        {
+                            "name": "exit",
+                            "type": "exit",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.866478202850.951320205471"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1436806323507.909537783478",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please pick a direction. Say either inbound or outbound."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.604704403476.507383405733",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What direction would you like. Please say either inbound or outbound. "
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.217908307327.1128662703380",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "For just the toll hours, please say tolls. For additional information on tolling, say information."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1436806323507.777831545117",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Do you want information on US fifty or I sixty six?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1467663425300.19760399363.133011558607",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please say either entrances or exits"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.574324400287.1143720234835.713128749710",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please say either inbound or outbound"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.804633138243.1212505493996",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Do you want a list of the entrances or exits?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.804633138243.856392000891",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Do you want the inbound or outbound interchanges?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.449454333768.443901577156",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Do you want the inbound or outbound toll"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.449454333768.730277912184",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "where are you getting on"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "What entrance are you using"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.449454333768.425078273810",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "where are you getting off"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "what exit are you using"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.119633774769",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "You want the current {direction} toll from {entrance} to {exit} . Is that correct?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1083046149280.918486290602",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Do you wish to save an inbound or outbound trip"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1083046149280.415697854428",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Where do you enter  i sixty six, that is, what entrance do you use"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.866478202850.951320205471",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Which exit do you use"
+                    }
+                ]
+            }
+        ]
+    }
+}
