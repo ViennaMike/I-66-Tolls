@@ -37,7 +37,7 @@ sb = StandardSkillBuilder(
     partition_keygen=ask_sdk_dynamodb.partition_keygen.user_id_partition_keygen)
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 toll_hours = """Eastbound tolls are charged between 5:30 and 9:30 am,
         Monday through Friday. westbound tolls are charged between 3 and 7 pm,
@@ -126,7 +126,8 @@ def get_tolls():
 class SkillInitializer(AbstractRequestInterceptor):
     """If starting, get the toll and speed data and store in session attributes"""
     def process(self, handler_input):
-         if handler_input.request_envelope.session.new == True:
+#         if handler_input.request_envelope.session.new == True:
+          if not handler_input.attributes_manager.session_attributes:
              I66_inspeed, I66_intime, I66_outspeed, I66_outtime, US50_inspeed, US50_intime, \
              US50_outspeed, US50_outtime = get_travel_times()
              all_tolls = get_tolls()
@@ -145,48 +146,44 @@ class LaunchRequestHandler(AbstractRequestHandler):
      def handle(self, handler_input):
          # type: (HandlerInput) -> Response   
         per_attr = handler_input.attributes_manager.persistent_attributes
-        fav_flag = True
+        session_attr = handler_input.attributes_manager.session_attributes
+        costs = session_attr.get('all_tolls') 
         if not per_attr:   #User doesn't have any favorite OD pairs
-            fav_flag = False
+            speech_text = """Welcome. You can find the current tolls on I-66 inside the Beltway,
+                    and also check on speeds. Be sure to specify which direction you want (inbound or outbound).
+                    You can also save your most frequent inbound and outbound routes."""        
         else:
             # Probably should write better, more focussed checks to see if the user
             # has frequent routes saved, but for now, just using try... except
             try: 
                 logger.debug('got to has record part of launch')
-                if time.localtime(time.time()).tm_hour < 12 and per_attr['in_entrance']:
+                if time.localtime(time.time()).tm_hour < 12 and 'in_entrance' in per_attr:
                     direction = 'inbound'
                     entrance_name = per_attr("in_entrance") 
-                    exit_name = per_attr("in_exit")                    
-                else:
-                    direction = 'outbound'
-                    entrance_name = per_attr("out_entrance") 
-                    exit_name = per_attr("out_exit")  
-
-                session_attr = handler_input.attributes_manager.session_attributes
-                costs = session_attr.get('all_tolls') 
-                logger.info(costs)
-                if direction == 'inbound':
+                    exit_name = per_attr("in_exit")  
                     start_zone = in_entrances[entrance_name]
                     end_zone = in_exits[exit_name]
                     toll_od = start_zone + ' ' + end_zone
-                    logger.info(toll_od)
-                    cost = costs[toll_od]          
-                else: 
+                    cost = costs[toll_od]    
+                    speech_text = f"""The current {direction} toll from {entrance_name} to {exit_name}
+                    is {cost}.""" 
+                elif time.localtime(time.time()).tm_hour >= 12 and 'out_entrance' in per_attr:
+                    direction = 'outbound'
+                    entrance_name = per_attr("out_entrance") 
+                    exit_name = per_attr("out_exit")  
                     start_zone = out_entrances[entrance_name]
                     end_zone = out_exits[exit_name]
                     toll_od = start_zone + ' ' + end_zone
-                    logger.info(toll_od)
                     cost = costs[toll_od]
-                    logger.info(cost)
-                speech_text = f"""The current toll from {entrance_name} to {exit_name} is {cost}."""          
+                    speech_text = f"""The current {direction} toll from {entrance_name} to {exit_name} 
+                    is {cost}."""  
+                else:  
+                    speech_text = """Welcome. You can find the current tolls on I-66 inside the Beltway,
+                    and also check on speeds. Be sure to specify which direction you want (inbound or outbound).
+                    You can also save your most frequent inbound and outbound routes."""            
             except Exception as e:
-                fav_flag = False
                 logger.debug('failed finding data')
-                logger.debug(e)
-        if fav_flag == False:     
-            speech_text = """Welcome. You can find the current tolls on I-66 inside the Beltway,
-                and also check on speeds. Be sure to specify which direction you want (inbound or outbound).
-                 You can also save your most frequent inbound and outbound routes."""            
+                logger.debug(e)    
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("I-66 Tolls", speech_text)).set_should_end_session(False)     
         return handler_input.response_builder.response            
@@ -331,7 +328,7 @@ class GetToll(AbstractRequestHandler):
         exit_name = slots["exit"].resolutions.resolutions_per_authority[0].values[0].value.name
         session_attr = handler_input.attributes_manager.session_attributes
         costs = session_attr.get('all_tolls') 
-        logger.info(costs)
+        logger.debug(costs)
         if direction == 'inbound':
             start_zone = in_entrances[entrance_name]
             end_zone = in_exits[exit_name]
@@ -344,7 +341,7 @@ class GetToll(AbstractRequestHandler):
             toll_od = start_zone + ' ' + end_zone
             logger.info(toll_od)
             cost = costs[toll_od]
-            logger.info(cost)
+            logger.debug(cost)
         speech_text = f"""The current toll from {entrance_name} to {exit_name} is {cost}."""
         return handler_input.response_builder.speak(speech_text).response
     
