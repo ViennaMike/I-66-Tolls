@@ -1,5 +1,6 @@
-# I-66-Tolls
-Alexa skill that gets real-time toll prices for Interstate 66 inside the beltway in Northern Virginia
+# 66 Tolls
+Alexa skill that gets real-time toll prices for Interstate 66 inside the beltway in Northern Virginia. 
+You can try it out on Alexa. The invocation is "Open sixty six tolls."
 
 This skill provides information on the current tolls being charged on I-66 inside the Beltway, 
 between the Capital Beltway and the Teddy Roosevelt Bridge. 
