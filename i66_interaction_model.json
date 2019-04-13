@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "interstate sixty six tolls",
+            "invocationName": "sixty six tolls",
             "intents": [
                 {
                     "name": "AMAZON.FallbackIntent",
