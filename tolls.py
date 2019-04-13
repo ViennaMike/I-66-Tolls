@@ -409,6 +409,7 @@ sb.add_exception_handler(AllExceptionHandler())
 sb.add_global_request_interceptor(SkillInitializer())
 sb.add_request_handler(SaveTrip())
 sb.add_request_handler(GetFavs())
+sb.add_request_handler(ListInterchanges())
 handler = sb.lambda_handler()
 
 
