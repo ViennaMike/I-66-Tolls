@@ -14,4 +14,5 @@ you can say save my trip.
 It's written in Python 3, using the Alexa Skills kit SDK for Python. It's written for the python code
 to run on AWS's lambda service and uses DynamoDB to persist user data. 
 
-The two files are the python file and the intraction model (a JSON file). 
+The two files are the python file and the intraction model (a JSON file). You'll need to get your own access token
+for the SmarterRoads API and put it in the "YOUR TOKEN HERE' line in the code.
