@@ -112,7 +112,7 @@ def get_tolls():
     """
     tolls_url = 'https://smarterroads.org/dataset/download/29'
     file = 'TollingTripPricing-I66/TollingTripPricing_current.xml'
-    token = '7MEheYSiJ8Kzi96cWcoWpIE8keZBpDiukaPKbd3idD02SP4VjJwZcLrwtieTDd3P'
+    token = 'YOUR TOKEN HERE'
     request_string = tolls_url + '?file=' + file + '&token=' + token
     tolls = requests.get(request_string)
     soup = BeautifulSoup(tolls.text, 'xml')
