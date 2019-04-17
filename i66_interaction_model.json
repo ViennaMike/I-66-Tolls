@@ -62,6 +62,7 @@
                     "name": "get_toll_hours",
                     "slots": [],
                     "samples": [
+                        "What are the toll hours",
                         "When are tolls charged",
                         "When are the tolls in effect"
                     ]

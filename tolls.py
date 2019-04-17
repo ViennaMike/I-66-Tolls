@@ -21,6 +21,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import requests
 from bs4 import BeautifulSoup
 import time
+from datetime import datetime
+from pytz import timezone
 import logging
 
 from ask_sdk_core.dispatch_components import (AbstractRequestHandler, AbstractExceptionHandler, 
@@ -37,13 +39,13 @@ sb = StandardSkillBuilder(
     partition_keygen=ask_sdk_dynamodb.partition_keygen.user_id_partition_keygen)
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 toll_hours = """Eastbound tolls are charged between 5:30 and 9:30 am,
         Monday through Friday. westbound tolls are charged between 3 and 7 pm,
         Monday through Friday. There are no toll or HOV requirements on Federal
         holidays or at all other times."""
-information = toll_hours + """ All users require an E-Z Pass for paying tolls. If
+information = toll_hours + """ <break time="1.5s"/>All users require an E-Z Pass for paying tolls. If
 you carpool with 2 or more people, you can use the lanes inside the beltway for free.
 You'll need an E-Z Pass Flex set to HOV modes to avoide the toll. Toll rates are
 set dynamicall, based on the volume of traffic on the toll roads. The values
@@ -110,7 +112,7 @@ def get_tolls():
     """
     tolls_url = 'https://smarterroads.org/dataset/download/29'
     file = 'TollingTripPricing-I66/TollingTripPricing_current.xml'
-    token = 'INSERT YOUR TOKEN HERE'
+    token = '7MEheYSiJ8Kzi96cWcoWpIE8keZBpDiukaPKbd3idD02SP4VjJwZcLrwtieTDd3P'
     request_string = tolls_url + '?file=' + file + '&token=' + token
     tolls = requests.get(request_string)
     soup = BeautifulSoup(tolls.text, 'xml')
@@ -149,6 +151,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         session_attr = handler_input.attributes_manager.session_attributes
         costs = session_attr.get('all_tolls') 
         if not per_attr:   #User doesn't have any favorite OD pairs
+            logger.debug('per_attr not found')
             speech_text = """Welcome. You can find the current tolls on I-66 inside the Beltway,
                     and also check on speeds. Be sure to specify which direction you want (inbound or outbound).
                     You can also save your most frequent inbound and outbound routes."""        
@@ -157,20 +160,22 @@ class LaunchRequestHandler(AbstractRequestHandler):
             # has frequent routes saved, but for now, just using try... except
             try: 
                 logger.debug('got to has record part of launch')
-                if time.localtime(time.time()).tm_hour < 12 and 'in_entrance' in per_attr:
+                local_hour = datetime.now(timezone('US/Eastern')).hour
+                logger.debug(f"""Local hour is {local_hour}""")
+                if local_hour < 12 and 'in_entrance' in per_attr:
                     direction = 'inbound'
-                    entrance_name = per_attr("in_entrance") 
-                    exit_name = per_attr("in_exit")  
+                    entrance_name = per_attr["in_entrance"] 
+                    exit_name = per_attr["in_exit"]  
                     start_zone = in_entrances[entrance_name]
                     end_zone = in_exits[exit_name]
                     toll_od = start_zone + ' ' + end_zone
                     cost = costs[toll_od]    
                     speech_text = f"""The current {direction} toll from {entrance_name} to {exit_name}
                     is {cost}.""" 
-                elif time.localtime(time.time()).tm_hour >= 12 and 'out_entrance' in per_attr:
+                elif local_hour >= 12 and 'out_entrance' in per_attr:
                     direction = 'outbound'
-                    entrance_name = per_attr("out_entrance") 
-                    exit_name = per_attr("out_exit")  
+                    entrance_name = per_attr["out_entrance"] 
+                    exit_name = per_attr["out_exit"]  
                     start_zone = out_entrances[entrance_name]
                     end_zone = out_exits[exit_name]
                     toll_od = start_zone + ' ' + end_zone
@@ -196,15 +201,16 @@ class HelpIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         speech_text = """This skill provides information on the current tolls being charged on I-66 
-        inside the Beltway, between the Capital Beltway and the Teddy Roosevelt Bridge. 
-        It also provides end to end speed and travel time information for both I-66 and US-50.  
-        You can ask for inbound or outbound tolls or inbound or outbound speeds. You can also ask 
-        for the toll hours or for additional information about the tolls, including the hours.
+        inside the Beltway, between the Capital Beltway and the Teddy Roosevelt Bridge. To get the toll,
+        ask for the inbound or outbound toll from your entrance to your exit. <break time="1.5s"/>
+        You can also say get travel speeds to get the comparative speeds on I-66 and US Route 50.
+        <break time="1.5s"/> In addition, you can ask for the toll hours or for additional information about 
+        the tolls, including the hours.<break time="1.5s"/>
         If you would like Alexa to remember your most frequent inbound or outbound entrance and exit,
         say save my trip."""
-
-        handler_input.response_builder.speak(speech_text).ask(speech_text).set_card(
-            SimpleCard("I-66 Tolls", speech_text))
+        reprompt = "What would you like to know?"
+        handler_input.response_builder.speak(speech_text).ask(reprompt).set_should_end_session(False) 
+#        return handler_input.response_builder.speak(speech_text).response 
         return handler_input.response_builder.response
     
 class CancelAndStopIntentHandler(AbstractRequestHandler):
@@ -355,10 +361,13 @@ class SaveTrip(AbstractRequestHandler):
         direction = slots["direction"].resolutions.resolutions_per_authority[0].values[0].value.name
         entrance_name = slots["entrance"].resolutions.resolutions_per_authority[0].values[0].value.name
         exit_name = slots["exit"].resolutions.resolutions_per_authority[0].values[0].value.name
+        fav = handler_input.attributes_manager.persistent_attributes
         if direction == 'inbound':
-            fav = {'in_entrance': entrance_name, 'in_exit': exit_name}
+            fav['in_entrance'] = entrance_name
+            fav['in_exit'] = exit_name
         else: 
-            fav = {'out_entrance': entrance_name, 'out_exit': exit_name}
+            fav['out_entrance'] = entrance_name
+            fav['out_exit'] = exit_name
         handler_input.attributes_manager.persistent_attributes = fav 
         handler_input.attributes_manager.save_persistent_attributes()          
         speech_text = f"""Your most frequent {direction} trip has been saved."""
