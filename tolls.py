@@ -59,7 +59,7 @@ zone_names = {'3100':'Capital Beltway Beginning', '3110': 'Lee Highway', '3120':
 
 # Dictionary mapping interchanges to tolling points
 #Eastbound / Inbound
-in_entrances = {'i sixty six': '3100', 'i fourn ninety five': '3100', 'route one twenty three': '3110',
+in_entrances = {'i sixty six': '3100', 'i four ninety five': '3100', 'route one twenty three': '3110',
                 'route seven': '3110', 'route two sixty seven': '3110', 'sycamore streete': '3120',
                 'glebe road':'3130'}
 in_exits = {'route seven':'3100', 'washington boulevard': '3110', 'westmoreland street': '3110',
@@ -112,7 +112,7 @@ def get_tolls():
     """
     tolls_url = 'https://smarterroads.org/dataset/download/29'
     file = 'TollingTripPricing-I66/TollingTripPricing_current.xml'
-    token = 'YOUR TOKEN HERE'
+    token = '7MEheYSiJ8Kzi96cWcoWpIE8keZBpDiukaPKbd3idD02SP4VjJwZcLrwtieTDd3P'
     request_string = tolls_url + '?file=' + file + '&token=' + token
     tolls = requests.get(request_string)
     soup = BeautifulSoup(tolls.text, 'xml')
@@ -184,8 +184,8 @@ class LaunchRequestHandler(AbstractRequestHandler):
                     is {cost}."""  
                 else:  
                     speech_text = """Welcome. You can find the current tolls on I-66 inside the Beltway,
-                    and also check on speeds. Be sure to specify which direction you want (inbound or outbound).
-                    You can also save your most frequent inbound and outbound routes."""            
+                    and also check on speeds. You can also save your most frequent inbound and outbound routes.
+                    Say "help" to get information on the available commands"""            
             except Exception as e:
                 logger.debug('failed finding data')
                 logger.debug(e)    
@@ -201,13 +201,16 @@ class HelpIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         speech_text = """This skill provides information on the current tolls being charged on I-66 
-        inside the Beltway, between the Capital Beltway and the Teddy Roosevelt Bridge. To get the toll,
-        ask for the inbound or outbound toll from your entrance to your exit. <break time="1.5s"/>
-        You can also say get travel speeds to get the comparative speeds on I-66 and US Route 50.
-        <break time="1.5s"/> In addition, you can ask for the toll hours or for additional information about 
-        the tolls, including the hours.<break time="1.5s"/>
-        If you would like Alexa to remember your most frequent inbound or outbound entrance and exit,
-        say save my trip."""
+        inside the Beltway, between the Capital Beltway and the Teddy Roosevelt Bridge, as well as the
+        travel speeds on I-66 and Route 50. <break time="1.5s"/>
+        To get the toll, say "Alexa, what is the inbound or outbound toll from a to b, where a is the
+        entrance and b is the exit. To get a list of entrances or exits, say "Alexa, what are the inbound
+        or outbound entrances or exits." <break time="1.0s"/>
+        To get the speeds, just say "Alexa, what are the inbound or outbound speeds."  <break time="1.5s"/>
+        To save your most frequent inbound and outbound route, say "save my trip" and Alexa will guide you
+        through the process. Once you've done that, just opening the skill will provide the current toll on your 
+        inbound route if it's morning, or your outbound route if it's afternoon or evening. <break time="1.0s"/>
+        Finally, you can ask for the toll hours or for additional information """
         reprompt = "What would you like to know?"
         handler_input.response_builder.speak(speech_text).ask(reprompt).set_should_end_session(False) 
 #        return handler_input.response_builder.speak(speech_text).response 
