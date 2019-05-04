@@ -118,11 +118,16 @@ def get_tolls():
     soup = BeautifulSoup(tolls.text, 'xml')
     if soup is None:
         time.sleep(2)
-        soup = BeautifulSoup(tolls.text, 'xml')    
-    entries = soup.find_all('opt')[::-1]  # Need to reverse, since want 2nd (later time) entries
-    tolls = {}
-    for entry in entries:
-        tolls[entry['StartZoneID'] +' '+ entry['EndZoneID']] = convert_to_currency(entry['ZoneTollRate'])
+        soup = BeautifulSoup(tolls.text, 'xml')  
+    if soup is None:
+        logger.info('No toll data is available')
+        tolls = {'none':'none'}
+    else:
+        entries = soup.find_all('opt')[::-1]  # Need to reverse, since want 2nd (later time) entries
+        tolls = {}
+        for entry in entries:
+            tolls[entry['StartZoneID'] +' '+ entry['EndZoneID']] = convert_to_currency(entry['ZoneTollRate'])
+    logger.info('tolls')
     return(tolls)        
 
 class SkillInitializer(AbstractRequestInterceptor):
@@ -147,18 +152,30 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
      def handle(self, handler_input):
          # type: (HandlerInput) -> Response   
+        logger.debug("about to get per_attr")
         per_attr = handler_input.attributes_manager.persistent_attributes
+        logger.debug('got past setting per_attr')
+        logger.debug(per_attr)
         session_attr = handler_input.attributes_manager.session_attributes
         costs = session_attr.get('all_tolls') 
-        if not per_attr:   #User doesn't have any favorite OD pairs
-            logger.debug('per_attr not found')
-            speech_text = """Welcome. You can find the current tolls on I-66 inside the Beltway,
-                    and also check on speeds. Be sure to specify which direction you want (inbound or outbound).
-                    You can also save your most frequent inbound and outbound routes."""        
-        else:
-            # Probably should write better, more focussed checks to see if the user
-            # has frequent routes saved, but for now, just using try... except
-            try: 
+        end_session_flag = False # Set to true if toll data isn't available from VDOT
+        logger.debug(f"""costs are: {costs}""")
+        if 'none' in costs:
+            logger.debug('failed finding data')
+            speech_text = """I'm sorry, but tolling information is temporarily unavailable.
+                Please try again in a minute."""
+            end_session_flag = True
+            
+        else:   
+            if per_attr == {}:   #User doesn't have any favorite OD pairs
+                logger.debug('per_attr not found')
+                speech_text = """Welcome. To get the current tolls, you need to provide the direction, entrance.
+                and exit. Say what is the current inbound or outbound toll between a and b, where a in your 
+                entrance and b is your exit. You can also say what are the inbound speeds or what are the outbound
+                speeds. For a complete explanation of features, say help."""        
+            else:
+                # Probably should write better, more focussed checks to see if the user
+                # has frequent routes saved, but for now, just using try... except
                 logger.debug('got to has record part of launch')
                 local_hour = datetime.now(timezone('US/Eastern')).hour
                 logger.debug(f"""Local hour is {local_hour}""")
@@ -186,11 +203,8 @@ class LaunchRequestHandler(AbstractRequestHandler):
                     speech_text = """Welcome. You can find the current tolls on I-66 inside the Beltway,
                     and also check on speeds. You can also save your most frequent inbound and outbound routes.
                     Say "help" to get information on the available commands"""            
-            except Exception as e:
-                logger.debug('failed finding data')
-                logger.debug(e)    
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("I-66 Tolls", speech_text)).set_should_end_session(False)     
+            SimpleCard("I-66 Tolls", speech_text)).set_should_end_session(end_session_flag)     
         return handler_input.response_builder.response            
   
 class HelpIntentHandler(AbstractRequestHandler):
@@ -202,15 +216,13 @@ class HelpIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         speech_text = """This skill provides information on the current tolls being charged on I-66 
         inside the Beltway, between the Capital Beltway and the Teddy Roosevelt Bridge, as well as the
-        travel speeds on I-66 and Route 50. <break time="1.5s"/>
+        travel speeds on I-66 and Route 50. <break time="1.0s"/>
         To get the toll, say "Alexa, what is the inbound or outbound toll from a to b, where a is the
         entrance and b is the exit. To get a list of entrances or exits, say "Alexa, what are the inbound
         or outbound entrances or exits." <break time="1.0s"/>
-        To get the speeds, just say "Alexa, what are the inbound or outbound speeds."  <break time="1.5s"/>
-        To save your most frequent inbound and outbound route, say "save my trip" and Alexa will guide you
-        through the process. Once you've done that, just opening the skill will provide the current toll on your 
-        inbound route if it's morning, or your outbound route if it's afternoon or evening. <break time="1.0s"/>
-        Finally, you can ask for the toll hours or for additional information """
+        To get the speeds, just say Alexa, what are the inbound or outbound speeds.
+        Would you like to hear more?"""  
+#        return handler_input.response_builder.speak(speech_text).response 
         reprompt = "What would you like to know?"
         handler_input.response_builder.speak(speech_text).ask(reprompt).set_should_end_session(False) 
 #        return handler_input.response_builder.speak(speech_text).response 
@@ -252,7 +264,9 @@ class AllExceptionHandler(AbstractExceptionHandler):
         # Log the exception in CloudWatch Logs
         logger.info(exception)
 
-        speech = "Sorry, I didn't get it. Can you please say it again!!"
+        speech = """Sorry, something went wrong. Please try it again or 
+        ask for help. Remember to specify the direction, inbound or outbound, 
+        when asking for the toll between two points."""
         handler_input.response_builder.speak(speech).ask(speech)
         return handler_input.response_builder.response   
        
@@ -338,19 +352,16 @@ class GetToll(AbstractRequestHandler):
         session_attr = handler_input.attributes_manager.session_attributes
         costs = session_attr.get('all_tolls') 
         logger.debug(costs)
+        logger.debug(f"""requested entrance and exits were: {entrance_name} and {exit_name}""")
         if direction == 'inbound':
             start_zone = in_entrances[entrance_name]
             end_zone = in_exits[exit_name]
-            toll_od = start_zone + ' ' + end_zone
-            logger.info(toll_od)
-            cost = costs[toll_od]          
         else: 
             start_zone = out_entrances[entrance_name]
             end_zone = out_exits[exit_name]
-            toll_od = start_zone + ' ' + end_zone
-            logger.info(toll_od)
-            cost = costs[toll_od]
-            logger.debug(cost)
+        toll_od = start_zone + ' ' + end_zone
+        logger.info(toll_od)
+        cost = costs[toll_od]   
         speech_text = f"""The current toll from {entrance_name} to {exit_name} is {cost}."""
         return handler_input.response_builder.speak(speech_text).response
     
@@ -373,7 +384,7 @@ class SaveTrip(AbstractRequestHandler):
             fav['out_exit'] = exit_name
         handler_input.attributes_manager.persistent_attributes = fav 
         handler_input.attributes_manager.save_persistent_attributes()          
-        speech_text = f"""Your most frequent {direction} trip has been saved."""
+        speech_text = f"""Your most frequent {direction} trip has been saved."""           
         return handler_input.response_builder.speak(speech_text).response
     
 class GetFavs(AbstractRequestHandler):
@@ -405,7 +416,57 @@ class GetFavs(AbstractRequestHandler):
             logger.info(e)
          
         return handler_input.response_builder.speak(speech_text).response
-   
+     
+class GetSpecificHelp(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name('get_specific_help')(handler_input)
+    
+    def handle(self, handler_input):
+        logger.debug('got to GetSpecificHelp')
+        slots = handler_input.request_envelope.request.intent.slots
+        help_type = slots["help_type"].resolutions.resolutions_per_authority[0].values[0].value.name
+        if help_type == "tolls":
+            speech_text = """To get the toll, say "Alexa, what is the inbound or outbound toll from a to b, 
+               where a is the entrance and b is the exit. To get a list of entrances or exits, 
+               say "Alexa, what are the inbound or outbound entrances or exits."""
+        elif help_type == "speeds":
+            speech_text = """To get the speeds, just say "Alexa, what are the inbound or outbound speeds."""         
+        else:
+            speech_text = """To save your most frequent inbound and outbound route, say "save my trip" and 
+               Alexa will guide you through the process. Once you've done that, just opening the skill 
+               will provide the current toll on your inbound route if it's morning, or your outbound route
+               if it's afternoon or evening."""             
+        return handler_input.response_builder.speak(speech_text).response    
+
+class YesIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("AMAZON.YesIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        speech_text = """OK. To save your most frequent inbound and outbound route, say "save my trip" 
+        and Alexa will guide you through the process. Once you've done that, just opening the skill 
+        will provide the current toll on your inbound route if it's morning, or your outbound route 
+        if it's afternoon or evening. <break time="1.0s"/>
+        Finally, you can ask for the toll hours or for additional information on the tolls."""          
+        handler_input.response_builder.speak(speech_text).set_should_end_session(False) 
+#        return handler_input.response_builder.speak(speech_text).response 
+        return handler_input.response_builder.response  
+    
+    
+class NoIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("AMAZON.NoIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        speech_text = "O.K."
+        handler_input.response_builder.speak(speech_text).set_should_end_session(False) 
+#        return handler_input.response_builder.speak(speech_text).response 
+        return handler_input.response_builder.response  
+    
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(GetSpeeds())
 sb.add_request_handler(GetToll())
@@ -419,6 +480,9 @@ sb.add_global_request_interceptor(SkillInitializer())
 sb.add_request_handler(SaveTrip())
 sb.add_request_handler(GetFavs())
 sb.add_request_handler(ListInterchanges())
+sb.add_request_handler(GetSpecificHelp())
+sb.add_request_handler(YesIntentHandler())
+sb.add_request_handler(NoIntentHandler())
 handler = sb.lambda_handler()
 
 

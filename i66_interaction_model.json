@@ -51,6 +51,7 @@
                         }
                     ],
                     "samples": [
+                        "What are the speeds",
                         "What are the {direction}  speeds",
                         "get the {direction} speeds",
                         "{direction} speeds",
@@ -125,6 +126,8 @@
                         }
                     ],
                     "samples": [
+                        "What's the toll between {entrance} and {exit}",
+                        "What's the {direction} toll between {entrance} and {exit}",
                         "what is the {direction} toll from {entrance} to {exit}"
                     ]
                 },
@@ -166,6 +169,39 @@
                     "samples": [
                         "What are my saved trips",
                         "What are my saved routes"
+                    ]
+                },
+                {
+                    "name": "get_specific_help",
+                    "slots": [
+                        {
+                            "name": "help_type",
+                            "type": "help_type",
+                            "samples": [
+                                "{help_type}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "How do I ask for {help_type}",
+                        "Help with {help_type}",
+                        "How do I {help_type}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.YesIntent",
+                    "samples": [
+                        "o.k.",
+                        "sure",
+                        "yes"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NoIntent",
+                    "samples": [
+                        "nope",
+                        "no thanks",
+                        "no"
                     ]
                 }
             ],
@@ -265,6 +301,7 @@
                             "name": {
                                 "value": "washington",
                                 "synonyms": [
+                                    "d.c.",
                                     "Washington",
                                     "roosevelt bridge"
                                 ]
@@ -348,6 +385,7 @@
                             "name": {
                                 "value": "washington",
                                 "synonyms": [
+                                    "d.c.",
                                     "Washington",
                                     "roosevelt bridge"
                                 ]
@@ -417,6 +455,42 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "help_type",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "save my route",
+                                "synonyms": [
+                                    "save my most frequent route",
+                                    "save my most frequent trip",
+                                    "save my favorite trip",
+                                    "save my trip",
+                                    "save my favorite route"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "speeds",
+                                "synonyms": [
+                                    "get travel speeds",
+                                    "get speeds",
+                                    "travel speeds"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "tolls",
+                                "synonyms": [
+                                    "get tolls",
+                                    "the toll"
+                                ]
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -480,7 +554,13 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.804633138243.856392000891"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1007052058212.799228369983.654347371815"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -497,7 +577,13 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.449454333768.443901577156"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.57207744565.317246946691.109947067261"
+                                }
+                            ]
                         },
                         {
                             "name": "entrance",
@@ -506,7 +592,13 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.449454333768.730277912184"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.57207744565.1068961870943.452660656561"
+                                }
+                            ]
                         },
                         {
                             "name": "exit",
@@ -515,7 +607,13 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.449454333768.425078273810"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.57207744565.1335199405702.1382328918860"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -532,7 +630,13 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.1083046149280.918486290602"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1471755970061.418797336335.271090197101"
+                                }
+                            ]
                         },
                         {
                             "name": "entrance",
@@ -541,7 +645,13 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.1083046149280.415697854428"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1471755970061.621882092589.181414191519"
+                                }
+                            ]
                         },
                         {
                             "name": "exit",
@@ -550,7 +660,35 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.866478202850.951320205471"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1471755970061.1085090918158.1147402938772"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "get_specific_help",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "help_type",
+                            "type": "help_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.275248174184.1229268355514"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.275248174184.1229268355514.1322509490715"
+                                }
+                            ]
                         }
                     ]
                 }
@@ -698,6 +836,87 @@
                     {
                         "type": "PlainText",
                         "value": "Which exit do you use"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.57207744565.317246946691.109947067261",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, {direction} is not a valid direction. Please specify the direction as either inbound or outbound."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.57207744565.1068961870943.452660656561",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, {entrance} is not a valid entrance. Please provide a valid entrance. For a list of valid entrances, say what are the inbound entrances or what are the outbound entrances."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.57207744565.1335199405702.1382328918860",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, {exit} is not a valid exit. Please provide a valid exit For a list of valid exits, say what are the inbound exits or what are the outbound exits"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1471755970061.418797336335.271090197101",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, {direction} is not a valid direction. Please specify the direction as either inbound or outbound."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1471755970061.621882092589.181414191519",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, {entrance} is not a valid entrance. Please provide a valid entrance. For a list of valid entrances, say what are the inbound entrances or what are the outbound entrances."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1471755970061.1085090918158.1147402938772",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, {exit} is not a valid exit. Please provide a valid exit For a list of valid exits, say what are the inbound exits or what are the outbound exits."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1007052058212.799228369983.654347371815",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, {direction} is not a valid direction. Please specify either inbound or outbound."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.275248174184.1229268355514",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please tell me what you'd like help on. Say tolls, speed, or save my trip"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.275248174184.1229268355514.1322509490715",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm sorry, I don't have help available for {help_type} . Please specify tolls, speeds, or save my route"
                     }
                 ]
             }
